@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI Email Writer{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h2>Welcome to AI Email Writer</h2>
+    <p>Generate professional emails in seconds using AI-powered technology</p>
+    
+    <div class="cta-buttons">
+        <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+    </div>
+</div>
+
+<div class="features">
+    <h3>Features</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>🤖 AI-Powered</h4>
+            <p>Uses advanced Groq API for intelligent email generation</p>
+        </div>
+        <div class="feature-card">
+            <h4>⚡ Fast</h4>
+            <p>Generate emails in seconds with high-quality output</p>
+        </div>
+        <div class="feature-card">
+            <h4>💾 Save & Track</h4>
+            <p>Save all your generated emails for future reference</p>
+        </div>
+        <div class="feature-card">
+            <h4>📧 Multiple Formats</h4>
+            <p>Support for formal, casual, sales, and support emails</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

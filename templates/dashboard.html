@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AI Email Writer{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Email Generator</h2>
+    
+    <div class="generator-container">
+        <form id="emailForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="recipient">Recipient Name/Title:</label>
+                    <input type="text" id="recipient" name="recipient" 
+                           placeholder="e.g., HR Manager, Client Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_type">Email Type:</label>
+                    <select id="email_type" name="email_type" required>
+                        <option value="">Select Type</option>
+                        <option value="formal">Formal / Professional</option>
+                        <option value="sales">Sales / Marketing</option>
+                        <option value="support">Customer Support</option>
+                        <option value="follow-up">Follow-up</option>
+                        <option value="apology">Apology / Complaint Response</option>
+                        <option value="job-inquiry">Job Inquiry</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tone">Tone:</label>
+                    <select id="tone" name="tone" required>
+                        <option value="">Select Tone</option>
+                        <option value="professional">Professional</option>
+                        <option value="friendly">Friendly</option>
+                        <option value="persuasive">Persuasive</option>
+                        <option value="apologetic">Apologetic</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="context">Key Points / Context:</label>
+                    <input type="text" id="context" name="context" 
+                           placeholder="e.g., Meeting request, project deadline, feedback" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="additional">Additional Details (Optional):</label>
+                <textarea id="additional" name="additional" placeholder="Any other relevant information" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="generateBtn">
+                🚀 Generate Email
+            </button>
+        </form>
+    </div>
+    
+    <div id="result" class="result-container" style="display: none;">
+        <h3>Generated Email</h3>
+        
+        <div class="email-output">
+            <div class="email-field">
+                <label>Subject:</label>
+                <div id="emailSubject" class="email-subject"></div>
+            </div>
+            
+            <div class="email-field">
+                <label>Body:</label>
+                <div id="emailBody" class="email-body"></div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="copyEmail()">📋 Copy Email</button>
+            <button class="btn btn-secondary" onclick="downloadEmail()">💾 Download</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('result').style.display='none'">Close</button>
+        </div>
+    </div>
+    
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Generating your email...</p>
+    </div>
+    
+    <div id="error" class="alert alert-danger" style="display: none;"></div>
+</div>
+
+<script>
+document.getElementById('emailForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const recipient = document.getElementById('recipient').value;
+    const email_type = document.getElementById('email_type').value;
+    const tone = document.getElementById('tone').value;
+    const context = document.getElementById('context').value + ' ' + (document.getElementById('additional').value || '');
+    
+    // Show loading
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    
+    try {
+        const response = await fetch('/api/generate-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                recipient,
+                email_type,
+                tone,
+                context
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('emailSubject').textContent = data.subject;
+            document.getElementById('emailBody').textContent = data.body;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        } else {
+            throw new Error(data.error || 'Failed to generate email');
+        }
+    } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+});
+
+function copyEmail() {
+    const subject = document.getElementById('emailSubject').textContent;
+    const body = document.getElementById('emailBody').textContent;
+    const text = `Subject: ${subject}\n\n${body}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Email copied to clipboard!');
+    });
+}
+
+function downloadEmail() {
+    const subject = document.getElementById('emailSubject').textContent;
+    const body = document.getElementById('emailBody').textContent;
+    const content = `Subject: ${subject}\n\n${body}`;
+    
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', `email_${Date.now()}.txt`);
+    element.style.display = 'none';
+    
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+</script>
+{% endblock %}

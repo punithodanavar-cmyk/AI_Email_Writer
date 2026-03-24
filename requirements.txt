@@ -1,0 +1,7 @@
+Flask
+Flask-MySQLdb
+python-dotenv
+groq
+Werkzeug
+mysql-connector-python
+gunicorn
