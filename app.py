@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from config import Config
-from database import Database
-from groq_handler import GroqEmailGenerator
+# from database import Database
+# from groq_handler import GroqEmailGenerator
 from auth import login_required, get_current_user
 import os
 import json
@@ -18,9 +18,7 @@ app.config.from_object(Config)
 # =========================
 @app.route('/')
 def index():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard'))
-    return render_template('index.html')
+    return "App is running 🚀"
 
 # =========================
 # REGISTER ROUTE
@@ -82,7 +80,6 @@ def logout():
 # DASHBOARD ROUTE
 # =========================
 @app.route('/dashboard')
-@login_required
 def dashboard():
     user_id = get_current_user()
     user = db.get_user_by_id(user_id)
