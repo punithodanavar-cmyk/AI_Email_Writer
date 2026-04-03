@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 # Initialize objects
-db = Database()
-email_generator = GroqEmailGenerator()
+# db = Database()
+# email_generator = GroqEmailGenerator()
 
 # =========================
 # HOME ROUTE
