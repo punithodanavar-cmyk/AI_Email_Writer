@@ -18,7 +18,7 @@ app.config.from_object(Config)
 # =========================
 @app.route('/')
 def index():
-    return "App is running 🚀"
+    return render_template('index.html')
 
 # =========================
 # REGISTER ROUTE
